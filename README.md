@@ -1,9 +1,42 @@
-pada kesempatan kali ini saya ingin membuat suatu program yg dimana dapat melakukan monitoring system computer yg dipasanginya 
-sebelumnya saya himbau bahwa kode ini dibuat bukan serta merta untuk kejahatan melainkan untuk praktek pembelajaran baik pembelajaran cara kerja malware ataupun antivirus,compiler,obfuskasi dll penyalahgunaan tidak ditanggung.
+# 🛠️ Program Monitoring System
 
-struktur utama dari program ini yaitu sysdiag.exe ygg merupakan hasil compile remote_diagnostic.cpp dan loader.exe hasil compile dari loader.cpp
+**Sistem monitoring remote berbasis C++ dengan teknik process injection dan command polling.**
 
-remote_diagnostic.cpp sendiri dasarnya dirancang untuk membuka proses cmd dan akan dilanjut dengan menciptakan sub procces sebuah powershell jika dibutuhkan dengan mekanisme pemanggilan http alias polling atau apaitu disebutnya, bukan via raw socket
-kemudian si cpp ini akan melakukan http get untuk mengecek ke backend apakah ada command terbaru yg dikirim dari server berdasarkan waktu polling thread yg sudah ditentukan lalu data data dari cpp ini akan di simpan di database di server
+---
 
-loader.cpp sendiri versi lebih ringannya dari remote_diagnostic.cpp karena dia hanya akan menjalankan dirinya sendiri dan membawa payload.h hasil dari conc=ver dari payload.bin dari hasil conver sysdiag.exe dari remote diagnostic.cpp lalu setelah selesai dia akan self delate program ini sendiri jadi sysdiag.exe hanya jalan di memory
+## 📝 Deskripsi
+
+Proyek ini merupakan **program monitoring sistem** yang memungkinkan eksekusi perintah jarak jauh melalui HTTP polling. Terdiri dari dua komponen utama:
+
+- **`sysdiag.exe`** → Engine utama (remote diagnostics)
+- **`loader.exe`** → Lightweight injector + self-delete
+
+> ⚠️ **Disclaimer**: Program ini dibuat **murni untuk tujuan edukasi** dan pembelajaran teknik low-level Windows programming, process injection, AMSI bypass, dan anti-analysis. **Tidak boleh digunakan untuk kegiatan ilegal.**
+
+---
+
+## ✨ Fitur Utama
+
+- **Remote Command Execution** via HTTP polling
+- **AMSI Bypass** (dual layer + unhook)
+- **Process Injection** ke `explorer.exe` (menggunakan `NtCreateThreadEx`)
+- **Self-Delete** setelah eksekusi
+- **Hidden Console** + Pipe communication
+- **Encrypted C2 URL** (XOR)
+- **PowerShell Support** dengan encoded command
+- **Output Queue** dengan retry mechanism
+
+---
+
+## 📁 Struktur Proyek
+
+| File                    | Deskripsi                                      | Keterangan                          |
+|------------------------|------------------------------------------------|-------------------------------------|
+| `sysdiag.exe`          | Remote diagnostic engine                       | Compiled from `remote_diagnostics.cpp` |
+| `loader.exe`           | Payload injector + self delete                 | Compiled from `loader.cpp`          |
+| `payload.bin`          | Shellcode / payload yang di-inject             | Convert shell code dari `sysdiag.exe` |
+| `payload.h`            | Header berisi payload array                    | Convert array dari versi `payload.bin`|
+| `remote_diagnostics.cpp` | Core logic (polling, cmd pipe, http)         | -                                   |
+| `loader.cpp`           | Process injection ke explorer.exe              | -                                   |
+
+---
